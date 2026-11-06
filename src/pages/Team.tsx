@@ -1,10 +1,26 @@
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+
 function Team() {
-  const players = [
-    "Yass",
-    "Fred G",
-    "Seb",
-    "Jo",
-  ];
+  const [players, setPlayers] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadPlayers = async () => {
+      const { data, error } = await supabase
+        .from("joueurs")
+        .select("*")
+        .order("nom");
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setPlayers(data || []);
+    };
+
+    loadPlayers();
+  }, []);
 
   return (
     <div>
@@ -12,7 +28,7 @@ function Team() {
 
       {players.map((player) => (
         <div
-          key={player}
+          key={player.id}
           style={{
             padding: "10px",
             marginBottom: "10px",
@@ -20,9 +36,17 @@ function Team() {
             borderRadius: "8px",
           }}
         >
-          <strong>{player}</strong>
+          <strong>{player.nom}</strong>
 
-          <div>Voir le profil &gt;</div>
+<div>⚽ Poste : {player.poste}</div>
+
+<div>🔢 Numéro : {player.numero}</div>
+
+<div>🎂 Âge : {player.age} ans</div>
+
+<div>🏆 Buts : {player.buts}</div>
+
+<div>🎯 Passes : {player.passes}</div>
         </div>
       ))}
     </div>
