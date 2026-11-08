@@ -25,20 +25,30 @@ function Team() {
 
   return (
     <div>
-      <h1>👥 Équipe</h1>
+      
 
       {players.map((player) => (
         <div
-          key={player.id}
-          style={{
-            padding: "10px",
-            marginBottom: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-          }}
-        >
-          <Link to={`/player/${player.id}`}>
-  <strong>{player.nom}</strong>
+  key={player.id}
+  style={{
+    backgroundColor: "#FFFFFF",
+    padding: "20px",
+    marginBottom: "15px",
+    borderRadius: "16px",
+    boxShadow: "0 8px 24px rgba(11,79,125,0.12)",
+    border: "1px solid #E5E7EB",
+  }}
+>
+          <Link
+  to={`/player/${player.id}`}
+  style={{
+    textDecoration: "none",
+    color: "#0B4F7D",
+    fontSize: "22px",
+    fontWeight: "bold",
+  }}
+>
+  {player.nom}
 </Link>
 
 <div>⚽ Poste : {player.poste}</div>

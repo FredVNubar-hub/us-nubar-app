@@ -31,7 +31,7 @@ function Rankings() {
 
   return (
     <div>
-      <h1>🏆 Classements</h1>
+    
 
       <h2>⚽ Meilleurs buteurs</h2>
 
