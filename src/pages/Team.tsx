@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 function Team() {
@@ -36,13 +37,13 @@ function Team() {
             borderRadius: "8px",
           }}
         >
-          <strong>{player.nom}</strong>
+          <Link to={`/player/${player.id}`}>
+  <strong>{player.nom}</strong>
+</Link>
 
 <div>⚽ Poste : {player.poste}</div>
 
 <div>🔢 Numéro : {player.numero}</div>
-
-<div>🎂 Âge : {player.age} ans</div>
 
 <div>🏆 Buts : {player.buts}</div>
 

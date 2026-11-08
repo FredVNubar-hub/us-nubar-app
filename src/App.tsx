@@ -5,6 +5,7 @@ import Team from "./pages/Team";
 import Rankings from "./pages/Rankings";
 import Results from "./pages/Results";
 import More from "./pages/More";
+import Player from "./pages/Player";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           <Route path="/rankings" element={<Rankings />} />
           <Route path="/results" element={<Results />} />
           <Route path="/more" element={<More />} />
+
+          <Route path="/player/:id" element={<Player />} />
         </Routes>
       </div>
     </BrowserRouter>
