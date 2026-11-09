@@ -12,13 +12,26 @@ import Results from "./pages/Results";
 import More from "./pages/More";
 import Player from "./pages/Player";
 import logo from "./assets/Logo US Nubar.jpg";
+import MarcelDor from "./pages/MarcelDor.tsx";
+import Puskas from "./pages/Puskas";
 const navStyle = ({ isActive }: { isActive: boolean }) => ({
-  backgroundColor: isActive ? "#1E90D8" : "#0B4F7D",
-  color: "white",
+  backgroundColor: isActive ? "#1009E6" : "#FFFFFF",
+
+  color: isActive ? "#FFFFFF" : "#1009E6",
+
   padding: "10px 15px",
+
   borderRadius: "10px",
+
   textDecoration: "none",
+
   fontWeight: isActive ? "bold" : "normal",
+
+  border: "2px solid #1009E6",
+
+  boxShadow: isActive
+    ? "0 4px 12px rgba(16,9,230,0.35)"
+    : "none",
 });
 
 function App() {
@@ -54,7 +67,7 @@ function App() {
 
   <h1
     style={{
-      color: "#0B4F7D",
+      color: "#1009E6",
       margin: 0,
       fontSize: "56px",
     }}
@@ -101,6 +114,8 @@ function App() {
           <Route path="/more" element={<More />} />
 
           <Route path="/player/:id" element={<Player />} />
+          <Route path="/marcel-dor"element={<MarcelDor />}/>
+          <Route path="/puskas" element={<Puskas />} />
         </Routes>
       </div>
     </BrowserRouter>

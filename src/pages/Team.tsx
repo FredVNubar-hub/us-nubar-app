@@ -43,7 +43,7 @@ function Team() {
   to={`/player/${player.id}`}
   style={{
     textDecoration: "none",
-    color: "#0B4F7D",
+    color: "#1009E6",
     fontSize: "22px",
     fontWeight: "bold",
   }}

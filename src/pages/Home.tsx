@@ -99,7 +99,7 @@ setGoalsAgainst(goalsAgainstCount);
 >
           <h3
   style={{
-    color: "#0B4F7D",
+    color: "#1009E6",
     marginTop: 0,
     marginBottom: "15px",
   }}
@@ -151,7 +151,7 @@ setGoalsAgainst(goalsAgainstCount);
   >
     <h3
       style={{
-        color: "#0B4F7D",
+        color: "#1009E6",
       }}
     >
       ⚽ US NUBAR {lastMatch.score_us_nubar} -{" "}

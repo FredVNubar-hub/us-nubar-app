@@ -41,7 +41,7 @@ function Results() {
         >
           <h3
   style={{
-    color: "#0B4F7D",
+    color: "#1009E6",
     marginTop: 0,
   }}
 >

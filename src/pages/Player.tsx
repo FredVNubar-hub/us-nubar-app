@@ -49,7 +49,7 @@ function Player() {
       width: "120px",
       height: "120px",
       borderRadius: "50%",
-      backgroundColor: "#0B4F7D",
+      backgroundColor: "#1009E6",
       color: "white",
       display: "flex",
       justifyContent: "center",
@@ -63,7 +63,7 @@ function Player() {
 
   <h1
     style={{
-      color: "#0B4F7D",
+      color: "#1009E6",
       margin: 0,
     }}
   >
@@ -91,7 +91,7 @@ function Player() {
 
       <hr />
 
-<h2 style={{ color: "#0B4F7D" }}>
+<h2 style={{ color: "#1009E6" }}>
   📊 Statistiques
 </h2>
 <p>🏆 Buts : {player.buts}</p>
@@ -103,7 +103,7 @@ function Player() {
 
 <hr />
 
-<h2 style={{ color: "#0B4F7D" }}>
+<h2 style={{ color: "#1009E6" }}>
   🏅 Récompenses
 </h2>
 <p>🏅 Homme du Match : {player.hommes_du_match}</p>
