@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 
 function Results() {
   const [matches, setMatches] = useState<any[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
 
   useEffect(() => {
     const loadMatches = async () => {
@@ -18,16 +19,82 @@ function Results() {
       }
 
       setMatches(data || []);
+
+      const { data: upcomingData } = await supabase
+      .from("matchs")
+      .select("*")
+      .eq("statut", "a_venir")
+      .order("date_match", { ascending: true });
+
+if (upcomingData) {
+  setUpcomingMatches(upcomingData);
+}
     };
 
     loadMatches();
   }, []);
 
   return (
-    <div>
-      
+  <div>
 
-      {matches.map((match) => (
+    <h2
+      style={{
+        color: "#1009E6",
+        marginBottom: "20px",
+      }}
+    >
+      📅 À venir
+    </h2>
+
+    {upcomingMatches.map((match) => (
+      <div
+        key={match.id}
+        style={{
+          backgroundColor: "#FFFFFF",
+          padding: "25px",
+          marginBottom: "20px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 24px rgba(16,9,230,0.15)",
+          border: "1px solid #E5E7EB",
+        }}
+      >
+        <h3
+          style={{
+            color: "#1009E6",
+            marginTop: 0,
+          }}
+        >
+          ⚽ US NUBAR - {match.adversaire}
+        </h3>
+
+        <div>📍 {match.lieu}</div>
+
+        <div>
+          📅{" "}
+          {new Date(match.date_match).toLocaleDateString(
+            "fr-FR",
+            {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }
+          )}
+        </div>
+      </div>
+    ))}
+
+    <h2
+      style={{
+        color: "#1009E6",
+        marginTop: "40px",
+        marginBottom: "20px",
+      }}
+    >
+      🏁 Résultats
+    </h2>
+
+    {matches.map((match) => (
         <div
           key={match.id}
           style={{

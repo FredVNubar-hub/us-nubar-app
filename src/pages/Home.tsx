@@ -14,11 +14,12 @@ const [goalsAgainst, setGoalsAgainst] = useState(0);
   useEffect(() => {
     const loadMatch = async () => {
       const { data, error } = await supabase
-        .from("matchs")
-        .select("*")
-        .eq("statut", "a_venir")
-        .limit(1)
-        .single();
+      .from("matchs")
+      .select("*")
+      .eq("statut", "a_venir")
+      .order("date_match", { ascending: true })
+      .limit(1)
+      .single();
 
       if (error) {
         console.error(error);

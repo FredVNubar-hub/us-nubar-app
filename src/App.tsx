@@ -98,7 +98,7 @@ function App() {
 </NavLink>
 
 <NavLink to="/results" style={navStyle}>
-  ⚽ Résultats
+  📅 Calendrier
 </NavLink>
 
 <NavLink to="/more" style={navStyle}>
