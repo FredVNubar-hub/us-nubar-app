@@ -50,7 +50,17 @@ setPlayers(playersData || []);
   const player = players.find((p) => p.id === id);
   return player ? player.nom : `ID ${id}`;
 };
+const presents = availability.filter(
+  (item) => item.statut === "present"
+);
 
+const incertains = availability.filter(
+  (item) => item.statut === "incertain"
+);
+
+const absents = availability.filter(
+  (item) => item.statut === "absent"
+);
   return (
     <div>
       <h1 style={{ color: "#1009E6" }}>
@@ -68,15 +78,30 @@ setPlayers(playersData || []);
   👥 Disponibilités
 </h2>
 
-{availability.map((item) => (
-  <p key={item.id}>
-    {item.statut === "present" && "✅ "}
-    {item.statut === "incertain" && "❓ "}
-    {item.statut === "absent" && "❌ "}
+<h3>✅ Présents ({presents.length})</h3>
 
+{presents.map((item) => (
+  <p key={item.id}>
     {getPlayerName(item.joueur_id)}
   </p>
 ))}
+
+<h3>❓ Incertains ({incertains.length})</h3>
+
+{incertains.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
+<h3>❌ Absents ({absents.length})</h3>
+
+{absents.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
     </div>
   );
 }
