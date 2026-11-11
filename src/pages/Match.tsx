@@ -8,9 +8,17 @@ function Match() {
 
   const [match, setMatch] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
   const [players, setPlayers] = useState<any[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState("");
 const [selectedStatus, setSelectedStatus] = useState("present");
+const [goalMinute, setGoalMinute] = useState("");
+const [goalScorer, setGoalScorer] = useState("");
+const [goalAssist, setGoalAssist] = useState("");
+const [composition, setComposition] = useState<any[]>([]);
+const [selectedFormation, setSelectedFormation] = useState("3-2-1");
+const [selectedPosition, setSelectedPosition] = useState("gardien");
+const [selectedCompositionPlayer, setSelectedCompositionPlayer] = useState("");
 
 
   useEffect(() => {
@@ -34,12 +42,27 @@ const [selectedStatus, setSelectedStatus] = useState("present");
 
         console.log("Recherche match_id =", Number(id));
         console.log(availabilityData);
-setAvailability(availabilityData || []);
-const { data: playersData } = await supabase
-  .from("joueurs")
-  .select("*");
+        setAvailability(availabilityData || []);
+        const { data: playersData } = await supabase
+        .from("joueurs")
+        .select("*");
 
-setPlayers(playersData || []);
+        setPlayers(playersData || []);
+        const { data: eventsData } = await supabase
+        .from("evenements_match")
+        .select("*")
+        .eq("match_id", Number(id))
+        .order("minute", { ascending: true });
+
+        setEvents(eventsData || []);
+        const { data: compositionData } = await supabase
+        .from("composition_match")
+        .select("*")
+        .eq("match_id", Number(id));
+
+        setComposition(compositionData || []);
+
+
     };
 
     loadMatch();
@@ -109,6 +132,101 @@ const addAvailability = async () => {
 
   window.location.reload();
 };
+const addGoal = async () => {
+  const { error } = await supabase
+    .from("evenements_match")
+    .insert([
+      {
+        match_id: Number(id),
+        minute: Number(goalMinute),
+        buteur_id: Number(goalScorer),
+        passeur_id: goalAssist
+          ? Number(goalAssist)
+          : null,
+      },
+    ]);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  window.location.reload();
+};
+const adversaire = match?.adversaire || "";
+const addComposition = async () => {
+    const existing = composition.find(
+  (item) =>
+    item.joueur_id === Number(selectedCompositionPlayer)
+);
+
+if (existing) {
+
+  const { error } = await supabase
+    .from("composition_match")
+    .update({
+      formation: selectedFormation,
+      position: selectedPosition,
+    })
+    .eq("id", existing.id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  window.location.reload();
+  return;
+}
+  const { error } = await supabase
+    .from("composition_match")
+    .insert([
+      {
+        match_id: Number(id),
+        joueur_id: Number(selectedCompositionPlayer),
+        formation: selectedFormation,
+        position: selectedPosition,
+      },
+    ]);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  window.location.reload();
+};
+const gardiens = composition.filter(
+  (item) => item.position === "gardien"
+);
+
+const defenseurs = composition.filter(
+  (item) => item.position === "defenseur"
+);
+
+const milieux = composition.filter(
+  (item) => item.position === "milieu"
+);
+
+const attaquants = composition.filter(
+  (item) => item.position === "attaquant"
+);
+
+const remplacants = composition.filter(
+  (item) => item.position === "remplacant"
+);
+
+const gardien = gardiens[0];
+const attaquant = attaquants[0];
+
+const defenseur1 = defenseurs[0];
+const defenseur2 = defenseurs[1];
+const defenseur3 = defenseurs[2];
+
+const milieu1 = milieux[0];
+const milieu2 = milieux[1];
+const milieu3 = milieux[2];
+
   return (
     <div>
       <h1 style={{ color: "#1009E6" }}>
@@ -133,10 +251,10 @@ const addAvailability = async () => {
     <option value="">Choisir un joueur</option>
 
     {players.map((player) => (
-      <option key={player.id} value={player.id}>
-        {player.nom}
-      </option>
-    ))}
+  <option key={player.id} value={player.id}>
+    {player.nom}
+  </option>
+))}
   </select>
 
   <select
@@ -185,6 +303,234 @@ const addAvailability = async () => {
 {sansReponse.map((player) => (
   <p key={player.id}>
     {player.nom}
+  </p>
+))}
+<h2 style={{ color: "#1009E6", marginTop: "40px" }}>
+  🟢 Composition
+</h2>
+
+<select
+  value={selectedFormation}
+  onChange={(e) => setSelectedFormation(e.target.value)}
+>
+  <option value="3-2-1">3-2-1</option>
+  <option value="2-3-1">2-3-1</option>
+</select>
+
+<br />
+<br />
+
+<select
+  value={selectedPosition}
+  onChange={(e) => setSelectedPosition(e.target.value)}
+>
+  <option value="gardien">🥅 Gardien</option>
+  <option value="defenseur">🛡️ Défenseur</option>
+  <option value="milieu">🎯 Milieu</option>
+  <option value="attaquant">⚽ Attaquant</option>
+  <option value="remplacant">🟡 Remplaçant</option>
+</select>
+
+<br />
+<br />
+
+<select
+  value={selectedCompositionPlayer}
+  onChange={(e) => setSelectedCompositionPlayer(e.target.value)}
+>
+  <option value="">Choisir un joueur</option>
+
+  {presents.map((item) => (
+  <option
+    key={item.joueur_id}
+    value={item.joueur_id}
+  >
+    {getPlayerName(item.joueur_id)}
+  </option>
+))}
+
+</select>
+
+<br />
+<br />
+
+<button onClick={addComposition}>
+  Ajouter à la composition
+</button>
+<h3>🥅 Gardien</h3>
+
+{gardiens.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
+<h3>🛡️ Défenseurs</h3>
+
+{defenseurs.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
+<h3>🎯 Milieux</h3>
+
+{milieux.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
+<h3>⚽ Attaquants</h3>
+
+{attaquants.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+
+<h3>🟡 Remplaçants</h3>
+
+{remplacants.map((item) => (
+  <p key={item.id}>
+    {getPlayerName(item.joueur_id)}
+  </p>
+))}
+<h2 style={{ color: "#1009E6", marginTop: "40px" }}>
+  🏟️ Terrain
+</h2>
+
+<div
+  style={{
+    border: "2px solid green",
+    padding: "20px",
+    marginTop: "20px",
+    marginBottom: "20px",
+    textAlign: "center",
+    backgroundColor: "#e8f5e9",
+  }}
+>
+
+  <div style={{ marginBottom: "30px" }}>
+    ⚽ {attaquant ? getPlayerName(attaquant.joueur_id) : ""}
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-around",
+      marginBottom: "30px",
+    }}
+  >
+    <div>
+      🎯 {milieu1 ? getPlayerName(milieu1.joueur_id) : ""}
+    </div>
+
+    <div>
+      🎯 {milieu2 ? getPlayerName(milieu2.joueur_id) : ""}
+    </div>
+
+    <div>
+      🎯 {milieu3 ? getPlayerName(milieu3.joueur_id) : ""}
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-around",
+      marginBottom: "30px",
+    }}
+  >
+    <div>
+      🛡️ {defenseur1 ? getPlayerName(defenseur1.joueur_id) : ""}
+    </div>
+
+    <div>
+      🛡️ {defenseur2 ? getPlayerName(defenseur2.joueur_id) : ""}
+    </div>
+
+    <div>
+      🛡️ {defenseur3 ? getPlayerName(defenseur3.joueur_id) : ""}
+    </div>
+  </div>
+
+  <div>
+    🥅 {gardien ? getPlayerName(gardien.joueur_id) : ""}
+  </div>
+
+</div>
+<h2 style={{ color: "#1009E6", marginTop: "40px" }}>
+  ⚽ Live Match
+</h2>
+
+<h3
+  style={{
+    color: "#1009E6",
+    textAlign: "center",
+    marginBottom: "20px",
+  }}
+>
+  US NUBAR {events.length} - 0 {adversaire}
+</h3>
+
+<div style={{ marginBottom: "20px" }}>
+  <input
+    type="number"
+    placeholder="Minute"
+    value={goalMinute}
+    onChange={(e) => setGoalMinute(e.target.value)}
+  />
+
+  <br />
+  <br />
+
+  <select
+    value={goalScorer}
+    onChange={(e) => setGoalScorer(e.target.value)}
+  >
+    <option value="">Choisir le buteur</option>
+
+    {players.map((player) => (
+      <option key={player.id} value={player.id}>
+        {player.nom}
+      </option>
+    ))}
+  </select>
+
+  <br />
+  <br />
+
+  <select
+    value={goalAssist}
+    onChange={(e) => setGoalAssist(e.target.value)}
+  >
+    <option value="">Pas de passeur</option>
+
+    {players.map((player) => (
+      <option key={player.id} value={player.id}>
+        {player.nom}
+      </option>
+    ))}
+  </select>
+
+  <br />
+  <br />
+
+  <button onClick={addGoal}>
+    ⚽ Ajouter un but
+  </button>
+</div>
+<h3 style={{ marginTop: "30px" }}>
+  📜 Historique du match
+</h3>
+
+{events.map((event) => (
+  <p key={event.id}>
+    ⚽ {event.minute}' {getPlayerName(event.buteur_id)}
+
+    {event.passeur_id &&
+      ` (${getPlayerName(event.passeur_id)})`}
   </p>
 ))}
     </div>
