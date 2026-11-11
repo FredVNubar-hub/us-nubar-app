@@ -227,6 +227,13 @@ const milieu1 = milieux[0];
 const milieu2 = milieux[1];
 const milieu3 = milieux[2];
 
+const joueursComposition = composition.map(
+  (item) => ({
+    id: item.joueur_id,
+    nom: getPlayerName(item.joueur_id),
+  })
+);
+
   return (
     <div>
       <h1 style={{ color: "#1009E6" }}>
@@ -409,7 +416,7 @@ const milieu3 = milieux[2];
     textAlign: "center",
     backgroundColor: "#e8f5e9",
   }}
->
+    >
 
   <div style={{ marginBottom: "30px" }}>
     ⚽ {attaquant ? getPlayerName(attaquant.joueur_id) : ""}
@@ -459,7 +466,9 @@ const milieu3 = milieux[2];
     🥅 {gardien ? getPlayerName(gardien.joueur_id) : ""}
   </div>
 
+
 </div>
+
 <h2 style={{ color: "#1009E6", marginTop: "40px" }}>
   ⚽ Live Match
 </h2>
@@ -491,11 +500,11 @@ const milieu3 = milieux[2];
   >
     <option value="">Choisir le buteur</option>
 
-    {players.map((player) => (
-      <option key={player.id} value={player.id}>
-        {player.nom}
-      </option>
-    ))}
+    {joueursComposition.map((player) => (
+  <option key={player.id} value={player.id}>
+    {player.nom}
+  </option>
+))}
   </select>
 
   <br />
@@ -507,11 +516,11 @@ const milieu3 = milieux[2];
   >
     <option value="">Pas de passeur</option>
 
-    {players.map((player) => (
-      <option key={player.id} value={player.id}>
-        {player.nom}
-      </option>
-    ))}
+    {joueursComposition.map((player) => (
+  <option key={player.id} value={player.id}>
+    {player.nom}
+  </option>
+))}
   </select>
 
   <br />
