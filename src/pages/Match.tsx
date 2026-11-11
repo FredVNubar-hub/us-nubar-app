@@ -156,6 +156,7 @@ const addGoal = async () => {
       {
         match_id: Number(id),
         minute: Math.floor(secondsElapsed / 60),
+        equipe: "nubar",
         buteur_id: Number(goalScorer),
         passeur_id: goalAssist
           ? Number(goalAssist)
@@ -170,6 +171,25 @@ const addGoal = async () => {
 
   window.location.reload();
 };
+const addOpponentGoal = async () => {
+  const { error } = await supabase
+    .from("evenements_match")
+    .insert([
+      {
+        match_id: Number(id),
+        minute: Math.floor(secondsElapsed / 60),
+        equipe: "adverse",
+      },
+    ]);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  window.location.reload();
+};
+
 const adversaire = match?.adversaire || "";
 const addComposition = async () => {
     const existing = composition.find(
@@ -250,6 +270,13 @@ const joueursComposition = composition.map(
     nom: getPlayerName(item.joueur_id),
   })
 );
+const butsNubar = events.filter(
+  (event) => event.equipe === "nubar"
+).length;
+
+const butsAdverses = events.filter(
+  (event) => event.equipe === "adverse"
+).length;
 
   return (
     <div>
@@ -587,7 +614,7 @@ const joueursComposition = composition.map(
     marginBottom: "20px",
   }}
 >
-  US NUBAR {events.length} - 0 {adversaire}
+  US NUBAR {butsNubar} - {butsAdverses} {adversaire}
 </h3>
 
 <div style={{ marginBottom: "20px" }}>
@@ -625,8 +652,16 @@ const joueursComposition = composition.map(
   <br />
 
   <button onClick={addGoal}>
-    ⚽ Ajouter un but
+    ⚽ But US Nubar
   </button>
+
+  <button
+  onClick={addOpponentGoal}
+  style={{ marginLeft: "10px" }}
+>
+  ⚽ But adverse
+</button>
+
 </div>
 <h3 style={{ marginTop: "30px" }}>
   📜 Historique du match
