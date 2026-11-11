@@ -7,6 +7,7 @@ function Player() {
 
   const [player, setPlayer] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [compositions, setCompositions] = useState<any[]>([]);
 
   useEffect(() => {
     const loadPlayer = async () => {
@@ -32,8 +33,22 @@ function Player() {
       return;
       }
 
-setEvents(eventsData || []);
-    };
+      setEvents(eventsData || []);
+
+      const {
+      data: compositionsData,
+      error: compositionsError,
+      } = await supabase
+      .from("composition_match")
+      .select("*");
+
+      if (compositionsError) {
+      console.error(compositionsError);
+      return;
+      }
+
+      setCompositions(compositionsData || []);
+      };
 
     loadPlayer();
   }, [id]);
@@ -52,6 +67,11 @@ const passes = events.filter(
   (event) =>
     event.equipe === "nubar" &&
     event.passeur_id === player.id
+).length;
+
+const matchsJoues = compositions.filter(
+  (composition) =>
+    composition.joueur_id === player.id
 ).length;
 
   return (
@@ -122,7 +142,8 @@ const passes = events.filter(
 
       <p>🎯 Passes : {passes}</p>
 
-      <p>✅ Matchs joués : {player.matchs_joues}</p>
+      <p>✅ Matchs joués : {matchsJoues}</p>
+
 
 
 <hr />
