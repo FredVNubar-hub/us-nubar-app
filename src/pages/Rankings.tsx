@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 
 function Rankings() {
   const [players, setPlayers] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
     const loadPlayers = async () => {
@@ -16,18 +17,50 @@ function Rankings() {
       }
 
       setPlayers(data || []);
+      const { data: eventsData, error: eventsError } =
+      await supabase
+      .from("evenements_match")
+      .select("*");
+
+      if (eventsError) {
+      console.error(eventsError);
+      return;
+      }
+
+setEvents(eventsData || []);
     };
 
     loadPlayers();
   }, []);
 
-  const topScorers = [...players].sort(
-    (a, b) => b.buts - a.buts
-  );
+  const playersWithStats = players.map((player) => {
+  const buts = events.filter(
+    (event) =>
+      event.equipe === "nubar" &&
+      event.buteur_id === player.id
+  ).length;
 
-  const topAssists = [...players].sort(
-    (a, b) => b.passes - a.passes
-  );
+  const passes = events.filter(
+    (event) =>
+      event.equipe === "nubar" &&
+      event.passeur_id === player.id
+  ).length;
+
+  return {
+    ...player,
+    buts,
+    passes,
+  };
+});
+
+  const topScorers = [...playersWithStats].sort(
+  (a, b) => b.buts - a.buts
+);
+
+const topAssists = [...playersWithStats].sort(
+  (a, b) => b.passes - a.passes
+);
+
 
   return (
     <div>
