@@ -316,16 +316,6 @@ const joueursComposition = composition.map(
   🟢 Composition
 </h2>
 
-<select
-  value={selectedFormation}
-  onChange={(e) => setSelectedFormation(e.target.value)}
->
-  <option value="3-2-1">3-2-1</option>
-  <option value="2-3-1">2-3-1</option>
-</select>
-
-<br />
-<br />
 
 <select
   value={selectedPosition}
@@ -429,17 +419,11 @@ const joueursComposition = composition.map(
       marginBottom: "30px",
     }}
   >
-    <div>
-      🎯 {milieu1 ? getPlayerName(milieu1.joueur_id) : ""}
-    </div>
-
-    <div>
-      🎯 {milieu2 ? getPlayerName(milieu2.joueur_id) : ""}
-    </div>
-
-    <div>
-      🎯 {milieu3 ? getPlayerName(milieu3.joueur_id) : ""}
-    </div>
+    {milieux.map((item) => (
+  <div key={item.id}>
+    🎯 {getPlayerName(item.joueur_id)}
+  </div>
+))}
   </div>
 
   <div
@@ -449,17 +433,11 @@ const joueursComposition = composition.map(
       marginBottom: "30px",
     }}
   >
-    <div>
-      🛡️ {defenseur1 ? getPlayerName(defenseur1.joueur_id) : ""}
-    </div>
-
-    <div>
-      🛡️ {defenseur2 ? getPlayerName(defenseur2.joueur_id) : ""}
-    </div>
-
-    <div>
-      🛡️ {defenseur3 ? getPlayerName(defenseur3.joueur_id) : ""}
-    </div>
+    {defenseurs.map((item) => (
+  <div key={item.id}>
+    🛡️ {getPlayerName(item.joueur_id)}
+  </div>
+))}
   </div>
 
   <div>
