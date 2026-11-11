@@ -15,7 +15,11 @@ const [selectedStatus, setSelectedStatus] = useState("present");
 const [goalMinute, setGoalMinute] = useState("");
 const [goalScorer, setGoalScorer] = useState("");
 const [goalAssist, setGoalAssist] = useState("");
+
+const [matchStarted, setMatchStarted] = useState(false);
+const [secondsElapsed, setSecondsElapsed] = useState(0);
 const [composition, setComposition] = useState<any[]>([]);
+
 const [selectedFormation, setSelectedFormation] = useState("3-2-1");
 const [selectedPosition, setSelectedPosition] = useState("gardien");
 const [selectedCompositionPlayer, setSelectedCompositionPlayer] = useState("");
@@ -67,6 +71,16 @@ const [selectedCompositionPlayer, setSelectedCompositionPlayer] = useState("");
 
     loadMatch();
   }, [id]);
+
+  useEffect(() => {
+  if (!matchStarted) return;
+
+  const interval = setInterval(() => {
+    setSecondsElapsed((prev) => prev + 1);
+  }, 1000);
+
+  return () => clearInterval(interval);
+  }, [matchStarted]);
 
   if (!match) {
     return <p>Chargement...</p>;
@@ -138,7 +152,7 @@ const addGoal = async () => {
     .insert([
       {
         match_id: Number(id),
-        minute: Number(goalMinute),
+        minute: Math.floor(secondsElapsed / 60),
         buteur_id: Number(goalScorer),
         passeur_id: goalAssist
           ? Number(goalAssist)
@@ -451,6 +465,40 @@ const joueursComposition = composition.map(
   ⚽ Live Match
 </h2>
 
+<div style={{ textAlign: "center", marginBottom: "20px" }}>
+  <h3>
+    ⏱️ {Math.floor(secondsElapsed / 60)
+      .toString()
+      .padStart(2, "0")}
+    :
+    {(secondsElapsed % 60)
+      .toString()
+      .padStart(2, "0")}
+  </h3>
+</div>
+
+<div
+  style={{
+    textAlign: "center",
+    marginBottom: "20px",
+  }}
+>
+  {!matchStarted ? (
+  <button
+    onClick={() => setMatchStarted(true)}
+  >
+    ▶️ Démarrer
+  </button>
+) : (
+  <button
+    onClick={() => setMatchStarted(false)}
+  >
+    ⏸️ Pause
+  </button>
+)}
+
+</div>
+
 <h3
   style={{
     color: "#1009E6",
@@ -462,15 +510,6 @@ const joueursComposition = composition.map(
 </h3>
 
 <div style={{ marginBottom: "20px" }}>
-  <input
-    type="number"
-    placeholder="Minute"
-    value={goalMinute}
-    onChange={(e) => setGoalMinute(e.target.value)}
-  />
-
-  <br />
-  <br />
 
   <select
     value={goalScorer}
