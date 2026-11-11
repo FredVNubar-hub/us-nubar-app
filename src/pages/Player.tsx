@@ -6,6 +6,7 @@ function Player() {
   const { id } = useParams();
 
   const [player, setPlayer] = useState<any>(null);
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
     const loadPlayer = async () => {
@@ -21,6 +22,17 @@ function Player() {
       }
 
       setPlayer(data);
+      const { data: eventsData, error: eventsError } =
+      await supabase
+      .from("evenements_match")
+      .select("*");
+
+      if (eventsError) {
+      console.error(eventsError);
+      return;
+      }
+
+setEvents(eventsData || []);
     };
 
     loadPlayer();
@@ -29,6 +41,18 @@ function Player() {
   if (!player) {
     return <div>Chargement...</div>;
   }
+
+  const buts = events.filter(
+  (event) =>
+    event.equipe === "nubar" &&
+    event.buteur_id === player.id
+).length;
+
+const passes = events.filter(
+  (event) =>
+    event.equipe === "nubar" &&
+    event.passeur_id === player.id
+).length;
 
   return (
     <div>
@@ -94,9 +118,9 @@ function Player() {
 <h2 style={{ color: "#1009E6" }}>
   📊 Statistiques
 </h2>
-<p>🏆 Buts : {player.buts}</p>
+      <p>🏆 Buts : {buts}</p>
 
-      <p>🎯 Passes : {player.passes}</p>
+      <p>🎯 Passes : {passes}</p>
 
       <p>✅ Matchs joués : {player.matchs_joues}</p>
 
