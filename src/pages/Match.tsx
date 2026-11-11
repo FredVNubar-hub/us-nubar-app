@@ -18,6 +18,9 @@ const [goalAssist, setGoalAssist] = useState("");
 
 const [matchStarted, setMatchStarted] = useState(false);
 const [secondsElapsed, setSecondsElapsed] = useState(0);
+const [halfTime, setHalfTime] = useState(false);
+const [secondHalf, setSecondHalf] = useState(false);
+const [matchFinished, setMatchFinished] = useState(false);
 const [composition, setComposition] = useState<any[]>([]);
 
 const [selectedFormation, setSelectedFormation] = useState("3-2-1");
@@ -465,6 +468,14 @@ const joueursComposition = composition.map(
   ⚽ Live Match
 </h2>
 
+<div style={{ textAlign: "center" }}>
+  <h3>
+    {secondHalf
+      ? "🔵 2ème période"
+      : "🟢 1ère période"}
+  </h3>
+</div>
+
 <div style={{ textAlign: "center", marginBottom: "20px" }}>
   <h3>
     ⏱️ {Math.floor(secondsElapsed / 60)
@@ -477,6 +488,52 @@ const joueursComposition = composition.map(
   </h3>
 </div>
 
+{halfTime && (
+  <h3
+    style={{
+      textAlign: "center",
+      color: "#f57c00",
+    }}
+  >
+    🟡 MI-TEMPS
+  </h3>
+)}
+
+{matchFinished && (
+  <h3
+    style={{
+      textAlign: "center",
+      color: "#d32f2f",
+    }}
+  >
+    ⏹️ MATCH TERMINÉ
+  </h3>
+)}
+
+{halfTime && (
+  <div
+    style={{
+      textAlign: "center",
+      marginBottom: "20px",
+    }}
+  >
+    <button
+      onClick={() => {
+  setHalfTime(false);
+  setSecondHalf(true);
+
+  setSecondsElapsed(25 * 60);
+
+  setMatchStarted(true);
+}}
+    >
+      ▶️ Reprendre la 2ème période
+    </button>
+  </div>
+)}
+
+{!matchFinished && (
+
 <div
   style={{
     textAlign: "center",
@@ -485,19 +542,43 @@ const joueursComposition = composition.map(
 >
   {!matchStarted ? (
   <button
-    onClick={() => setMatchStarted(true)}
+    onClick={() => {
+  setHalfTime(false);
+  setMatchStarted(true);
+}}
   >
     ▶️ Démarrer
   </button>
 ) : (
-  <button
-    onClick={() => setMatchStarted(false)}
-  >
-    ⏸️ Pause
-  </button>
+  <>
+    <button
+      onClick={() => setMatchStarted(false)}
+    >
+      ⏸️ Pause
+    </button>
+
+    <button
+  style={{ marginLeft: "10px" }}
+  onClick={() => {
+    if (!secondHalf) {
+      setMatchStarted(false);
+      setHalfTime(true);
+    } else {
+      setMatchStarted(false);
+      setMatchFinished(true);
+    }
+  }}
+>
+  {secondHalf
+    ? "⏹️ Fin du match"
+    : "🟡 Mi-temps"}
+</button>
+  </>
 )}
 
 </div>
+
+)}
 
 <h3
   style={{
