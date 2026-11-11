@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { Link } from "react-router-dom";
 
 function Results() {
   const [matches, setMatches] = useState<any[]>([]);
@@ -47,8 +48,15 @@ if (upcomingData) {
     </h2>
 
     {upcomingMatches.map((match) => (
-      <div
-        key={match.id}
+      <Link
+  key={match.id}
+  to={`/match/${match.id}`}
+  style={{
+    textDecoration: "none",
+    color: "inherit",
+  }}
+>
+  <div
         style={{
           backgroundColor: "#FFFFFF",
           padding: "25px",
@@ -81,7 +89,8 @@ if (upcomingData) {
             }
           )}
         </div>
-      </div>
+        </div>
+</Link>
     ))}
 
     <h2
