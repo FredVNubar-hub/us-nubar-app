@@ -15,6 +15,7 @@ import logo from "./assets/Logo US Nubar.jpg";
 import MarcelDor from "./pages/MarcelDor.tsx";
 import Puskas from "./pages/Puskas";
 import Match from "./pages/Match";
+import Login from "./pages/Login";
 const navStyle = ({ isActive }: { isActive: boolean }) => ({
   backgroundColor: isActive ? "#1009E6" : "#FFFFFF",
 
@@ -105,6 +106,10 @@ function App() {
 <NavLink to="/more" style={navStyle}>
   ⭐ Autres
 </NavLink>
+
+<NavLink to="/login" style={navStyle}>
+  🔐 Connexion
+</NavLink>
         </nav>
 
         <Routes>
@@ -118,6 +123,7 @@ function App() {
           <Route path="/marcel-dor"element={<MarcelDor />}/>
           <Route path="/puskas" element={<Puskas />} />
           <Route path="/match/:id" element={<Match />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </BrowserRouter>
