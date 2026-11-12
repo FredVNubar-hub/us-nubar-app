@@ -7,6 +7,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState<any>(null);
   const [playerName, setPlayerName] = useState("");
+  const [playerRole, setPlayerRole] = useState("");
 
 useEffect(() => {
   const getUser = async () => {
@@ -23,8 +24,9 @@ useEffect(() => {
     .single();
 
   if (player) {
-    setPlayerName(player.nom);
-  }
+  setPlayerName(player.nom);
+  setPlayerRole(player.role);
+}
 }
   };
 
@@ -86,7 +88,7 @@ const signOut = async () => {
       </h1>
 {user ? (
   <p>
-    ✅ Connecté : {playerName || user.email}
+    ✅ Connecté : {playerName || user.email} ({playerRole})
     {user && (
   <button onClick={signOut}>
     Déconnexion
