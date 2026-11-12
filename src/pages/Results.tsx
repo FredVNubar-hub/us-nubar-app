@@ -22,132 +22,133 @@ function Results() {
       setMatches(data || []);
 
       const { data: upcomingData } = await supabase
-      .from("matchs")
-      .select("*")
-      .eq("statut", "a_venir")
-      .order("date_match", { ascending: true });
+        .from("matchs")
+        .select("*")
+        .eq("statut", "a_venir")
+        .order("date_match", { ascending: true });
 
-if (upcomingData) {
-  setUpcomingMatches(upcomingData);
-}
+      if (upcomingData) {
+        setUpcomingMatches(upcomingData);
+      }
     };
 
     loadMatches();
   }, []);
 
   return (
-  <div>
-
-    <h2
-      style={{
-        color: "#1009E6",
-        marginBottom: "20px",
-      }}
-    >
-      📅 À venir
-    </h2>
-
-    {upcomingMatches.map((match) => (
-      <Link
-  key={match.id}
-  to={`/match/${match.id}`}
-  style={{
-    textDecoration: "none",
-    color: "inherit",
-  }}
->
-  <div
+    <div>
+      <h2
         style={{
-          backgroundColor: "#FFFFFF",
-          padding: "25px",
+          color: "#1009E6",
           marginBottom: "20px",
-          borderRadius: "16px",
-          boxShadow: "0 8px 24px rgba(16,9,230,0.15)",
-          border: "1px solid #E5E7EB",
         }}
       >
-        <h3
+        📅 À venir
+      </h2>
+
+      {upcomingMatches.map((match) => (
+        <Link
+          key={match.id}
+          to={`/match/${match.id}`}
           style={{
-            color: "#1009E6",
-            marginTop: 0,
+            textDecoration: "none",
+            color: "inherit",
+            display: "block",
           }}
         >
-          ⚽ US NUBAR - {match.adversaire}
-        </h3>
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              padding: "25px",
+              marginBottom: "20px",
+              borderRadius: "16px",
+              boxShadow: "0 8px 24px rgba(16,9,230,0.15)",
+              border: "1px solid #E5E7EB",
+            }}
+          >
+            <h3
+              style={{
+                color: "#1009E6",
+                marginTop: 0,
+              }}
+            >
+              ⚽ US NUBAR - {match.adversaire}
+            </h3>
 
-        <div>📍 {match.lieu}</div>
+            <div>📍 {match.lieu}</div>
 
-        <div>
-          📅{" "}
-          {new Date(match.date_match).toLocaleDateString(
-            "fr-FR",
-            {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            }
-          )}
-        </div>
-        </div>
-</Link>
-    ))}
+            <div>
+              📅{" "}
+              {new Date(match.date_match).toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </div>
+          </div>
+        </Link>
+      ))}
 
-    <h2
-      style={{
-        color: "#1009E6",
-        marginTop: "40px",
-        marginBottom: "20px",
-      }}
-    >
-      🏁 Résultats
-    </h2>
+      <h2
+        style={{
+          color: "#1009E6",
+          marginTop: "40px",
+          marginBottom: "20px",
+        }}
+      >
+        🏁 Résultats
+      </h2>
 
-    {matches.map((match) => (
-        <div
+      {matches.map((match) => (
+        <Link
           key={match.id}
+          to={`/match/${match.id}`}
           style={{
-  backgroundColor: "#FFFFFF",
-  padding: "25px",
-  marginBottom: "20px",
-  borderRadius: "16px",
-  boxShadow: "0 8px 24px rgba(11,79,125,0.12)",
-  border: "1px solid #E5E7EB",
-}}
+            textDecoration: "none",
+            color: "inherit",
+            display: "block",
+          }}
         >
-          <h3
-  style={{
-    color: "#1009E6",
-    marginTop: 0,
-  }}
->
-  ⚽ US NUBAR {match.score_us_nubar} - {match.score_adverse}{" "}
-  {match.adversaire}
-</h3>
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              padding: "25px",
+              marginBottom: "20px",
+              borderRadius: "16px",
+              boxShadow: "0 8px 24px rgba(11,79,125,0.12)",
+              border: "1px solid #E5E7EB",
+              cursor: "pointer",
+            }}
+          >
+            <h3
+              style={{
+                color: "#1009E6",
+                marginTop: 0,
+              }}
+            >
+              ⚽ US NUBAR {match.score_us_nubar} - {match.score_adverse}{" "}
+              {match.adversaire}
+            </h3>
 
-          <div>📍 {match.lieu}</div>
+            <div>📍 {match.lieu}</div>
 
-          <div>
-  📅{" "}
-  {new Date(match.date_match).toLocaleDateString(
-    "fr-FR",
-    {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }
-  )}{" "}
-  à{" "}
-  {new Date(match.date_match).toLocaleTimeString(
-    "fr-FR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  )}
-</div>
-        </div>
+            <div>
+              📅{" "}
+              {new Date(match.date_match).toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}{" "}
+              à{" "}
+              {new Date(match.date_match).toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          </div>
+        </Link>
       ))}
     </div>
   );
