@@ -7,7 +7,8 @@ function Player() {
 
   const [player, setPlayer] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
-  const [compositions, setCompositions] = useState<any[]>([]);
+  const [availabilities, setAvailabilities] = useState<any[]>([]);
+  const [finishedMatchIds, setFinishedMatchIds] = useState<number[]>([]);
 
   useEffect(() => {
     const loadPlayer = async () => {
@@ -21,144 +22,214 @@ function Player() {
         console.error(error);
         return;
       }
-
       setPlayer(data);
-      const { data: eventsData, error: eventsError } =
-      await supabase
-      .from("evenements_match")
-      .select("*");
 
-      if (eventsError) {
-      console.error(eventsError);
-      return;
-      }
-
+      const { data: eventsData } = await supabase
+        .from("evenements_match")
+        .select("*");
       setEvents(eventsData || []);
 
-      const {
-      data: compositionsData,
-      error: compositionsError,
-      } = await supabase
-      .from("composition_match")
-      .select("*");
+      const { data: availData } = await supabase
+        .from("disponibilites")
+        .select("*")
+        .eq("joueur_id", Number(id));
+      setAvailabilities(availData || []);
 
-      if (compositionsError) {
-      console.error(compositionsError);
-      return;
-      }
-
-      setCompositions(compositionsData || []);
-      };
+      const { data: matchsData } = await supabase
+        .from("matchs")
+        .select("id")
+        .eq("statut", "termine");
+      setFinishedMatchIds((matchsData || []).map((m) => m.id));
+    };
 
     loadPlayer();
   }, [id]);
 
   if (!player) {
-    return <div>Chargement...</div>;
+    return <p>Chargement...</p>;
   }
 
   const buts = events.filter(
-  (event) =>
-    event.equipe === "nubar" &&
-    event.buteur_id === player.id
-).length;
+    (e) => e.equipe === "nubar" && e.buteur_id === player.id
+  ).length;
 
-const passes = events.filter(
-  (event) =>
-    event.equipe === "nubar" &&
-    event.passeur_id === player.id
-).length;
+  const passes = events.filter(
+    (e) => e.equipe === "nubar" && e.passeur_id === player.id
+  ).length;
 
-const matchsJoues = compositions.filter(
-  (composition) =>
-    composition.joueur_id === player.id
-).length;
+  const matchsJoues = availabilities.filter(
+    (a) => a.statut === "present" && finishedMatchIds.includes(a.match_id)
+  ).length;
+
+  const ratioButs = matchsJoues > 0 ? (buts / matchsJoues).toFixed(2) : "0.00";
+  const ratioPasses = matchsJoues > 0 ? (passes / matchsJoues).toFixed(2) : "0.00";
+
+  const cardStyle = {
+    backgroundColor: "#FFFFFF",
+    padding: "20px",
+    borderRadius: "16px",
+    boxShadow: "0 4px 14px rgba(15, 23, 42, 0.06)",
+    border: "1px solid #E2E8F0",
+    marginBottom: "16px",
+  };
 
   return (
     <div>
-      <Link to="/team">
-  ← Retour à l'équipe
-</Link>
+      <Link
+        to="/team"
+        style={{ textDecoration: "none", color: "#1009E6", fontWeight: "bold" }}
+      >
+        ← Retour à l'effectif
+      </Link>
 
-<br />
-<br />
-      <div
-  style={{
-    textAlign: "center",
-    marginBottom: "25px",
-  }}
->
-  <div
-    style={{
-      width: "120px",
-      height: "120px",
-      borderRadius: "50%",
-      backgroundColor: "#1009E6",
-      color: "white",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontSize: "50px",
-      margin: "0 auto 15px auto",
-    }}
-  >
-    👤
-  </div>
+      {/* CARTE D'IDENTITÉ DU JOUEUR */}
+      <div style={{ ...cardStyle, marginTop: "14px", textAlign: "center" }}>
+        {player.photo_url ? (
+          <img
+            src={player.photo_url}
+            alt={player.nom}
+            style={{
+              width: "96px",
+              height: "96px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "3px solid #1009E6",
+              marginBottom: "10px",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "88px",
+              height: "88px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #1009E6 0%, #090482 100%)",
+              color: "#FFFFFF",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "34px",
+              fontWeight: "bold",
+              margin: "0 auto 12px auto",
+            }}
+          >
+            {player.numero ? `#${player.numero}` : "👤"}
+          </div>
+        )}
 
-  <h1
-    style={{
-      color: "#1009E6",
-      margin: 0,
-    }}
-  >
-    {player.nom}
-  </h1>
-</div>
+        <h1 style={{ color: "#0F172A", margin: "0 0 6px 0", fontSize: "24px" }}>
+          {player.nom}
+        </h1>
 
-<p>
-  🎂 Né le{" "}
-  {player.date_naissance
-    ? new Date(player.date_naissance).toLocaleDateString(
-        "fr-FR",
-        {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }
-      )
-    : "Non renseigné"}
-</p>
+        <div style={{ display: "flex", justifyContent: "center", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
+          <span
+            style={{
+              backgroundColor: "#EEF2FF",
+              color: "#1009E6",
+              padding: "4px 12px",
+              borderRadius: "20px",
+              fontSize: "13px",
+              fontWeight: "bold",
+            }}
+          >
+            ⚽ {player.poste || "Joueur"}
+          </span>
+          {player.numero && (
+            <span
+              style={{
+                backgroundColor: "#F1F5F9",
+                color: "#334155",
+                padding: "4px 12px",
+                borderRadius: "20px",
+                fontSize: "13px",
+                fontWeight: "bold",
+              }}
+            >
+              N° {player.numero}
+            </span>
+          )}
+        </div>
 
-<p>⚽ Poste : {player.poste}</p>
+        <div style={{ fontSize: "13px", color: "#64748B" }}>
+          🎂 Né le{" "}
+          {player.date_naissance
+            ? new Date(player.date_naissance).toLocaleDateString("fr-FR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "Non renseigné"}
+        </div>
+      </div>
 
-<p>🔢 Numéro : {player.numero}</p>
+      {/* GRILLE DE STATISTIQUES */}
+      <div style={cardStyle}>
+        <h2 style={{ color: "#1009E6", fontSize: "18px", marginBottom: "14px" }}>
+          📊 Statistiques de la saison
+        </h2>
 
-      <hr />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", textAlign: "center" }}>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "12px 6px", borderRadius: "12px", border: "1px solid #E2E8F0" }}>
+            <div style={{ fontSize: "22px", fontWeight: "bold", color: "#1009E6" }}>
+              {matchsJoues}
+            </div>
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#334155" }}>
+              Matchs
+            </div>
+            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "2px" }}>
+              {finishedMatchIds.length > 0
+                ? `${Math.round((matchsJoues / finishedMatchIds.length) * 100)}%`
+                : "0%"}
+            </div>
+          </div>
 
-<h2 style={{ color: "#1009E6" }}>
-  📊 Statistiques
-</h2>
-      <p>🏆 Buts : {buts}</p>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "12px 6px", borderRadius: "12px", border: "1px solid #E2E8F0" }}>
+            <div style={{ fontSize: "22px", fontWeight: "bold", color: "#1009E6" }}>
+              {buts}
+            </div>
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#334155" }}>
+              Buts
+            </div>
+            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "2px" }}>
+              {ratioButs} / m
+            </div>
+          </div>
 
-      <p>🎯 Passes : {passes}</p>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "12px 6px", borderRadius: "12px", border: "1px solid #E2E8F0" }}>
+            <div style={{ fontSize: "22px", fontWeight: "bold", color: "#1009E6" }}>
+              {passes}
+            </div>
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#334155" }}>
+              Passes
+            </div>
+            <div style={{ fontSize: "11px", color: "#64748B", marginTop: "2px" }}>
+              {ratioPasses} / m
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <p>✅ Matchs joués : {matchsJoues}</p>
+      {/* PALMARÈS INDIVIDUEL */}
+      <div style={cardStyle}>
+        <h2 style={{ color: "#1009E6", fontSize: "18px", marginBottom: "12px" }}>
+          🏅 Palmarès & Récompenses
+        </h2>
 
-
-
-<hr />
-
-<h2 style={{ color: "#1009E6" }}>
-  🏅 Récompenses
-</h2>
-<p>🏅 Homme du Match : {player.hommes_du_match}</p>
-
-<p>⭐ Marcel d'Or : {player.marcel_dor}</p>
-
-<p>⭐ Puskas : {player.puskas}</p>
-
-<p>🏆 Autres récompenses : {player.autres_recompenses}</p>
-
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "14px" }}>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "10px", borderRadius: "10px" }}>
+            🏅 Homme du match : <strong>{player.hommes_du_match || 0}</strong>
+          </div>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "10px", borderRadius: "10px" }}>
+            🏆 Marcel d'Or : <strong>{player.marcel_dor || 0}</strong>
+          </div>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "10px", borderRadius: "10px" }}>
+            ⚽ Prix Puskas : <strong>{player.puskas || 0}</strong>
+          </div>
+          <div style={{ backgroundColor: "#F8FAFC", padding: "10px", borderRadius: "10px" }}>
+            🎖️ Autres : <strong>{player.autres_recompenses || 0}</strong>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
