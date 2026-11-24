@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import CompositionTerrain from "../components/CompositionTerrain";
 
-function MatchLive({ match, players, events, isAdmin, onReload }: any) {
+function MatchLive({ match, players, events, availability, composition, isAdmin, onReload }: any) {
   const [goalScorer, setGoalScorer] = useState("");
   const [goalAssist, setGoalAssist] = useState("");
   const [goalMinuteManual, setGoalMinuteManual] = useState("");
@@ -110,6 +111,7 @@ function MatchLive({ match, players, events, isAdmin, onReload }: any) {
   const card = { backgroundColor: "#FFF", padding: "20px", borderRadius: "16px", border: "1px solid #E5E7EB", marginBottom: "20px" };
 
   return (
+    <>
     <div style={card}>
       <h2 style={{ color: "#1009E6", marginTop: 0, textAlign: "center" }}>⏱️ Direct du match</h2>
 
@@ -274,6 +276,17 @@ function MatchLive({ match, players, events, isAdmin, onReload }: any) {
         </div>
       )}
     </div>
+
+    <CompositionTerrain
+        matchId={match.id}
+        players={players}
+        availability={availability}
+        composition={composition}
+        isAdmin={isAdmin}
+        isLive={true}
+        onReload={onReload}
+      />
+    </>
   );
 }
 

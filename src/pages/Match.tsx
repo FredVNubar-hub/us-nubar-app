@@ -118,11 +118,13 @@ function Match() {
         />
       )}
 
-      {activeTab === "live" && (
+            {activeTab === "live" && (
         <MatchLive
           match={match}
           players={players}
           events={events}
+          availability={availability}
+          composition={composition}
           isAdmin={isAdmin}
           onReload={loadAll}
         />
