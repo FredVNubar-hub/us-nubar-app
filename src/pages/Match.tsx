@@ -125,6 +125,7 @@ function Match() {
           events={events}
           availability={availability}
           composition={composition}
+          currentPlayer={currentPlayer}
           isAdmin={isAdmin}
           onReload={loadAll}
         />

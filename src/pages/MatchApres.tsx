@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import CommentairesMatch from "../components/CommentairesMatch";
 
 function MatchApres({ match, players, events, availability, currentPlayer, isAdmin, onReload }: any) {
   const [editScoreNubar, setEditScoreNubar] = useState<number>(match.score_us_nubar ?? 0);
@@ -428,24 +429,31 @@ function MatchApres({ match, players, events, availability, currentPlayer, isAdm
               />
 
               <button
-                onClick={addNomination}
-                style={{
-                  backgroundColor: "#1009E6",
-                  color: "#FFF",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  fontWeight: "bold",
-                }}
-              >
-                Ajouter la nomination
-              </button>
-            </div>
+              onClick={addNomination}
+              style={{
+                backgroundColor: "#1009E6",
+                color: "#FFF",
+                border: "none",
+                padding: "10px 16px",
+                borderRadius: "8px",
+                fontWeight: "bold",
+              }}
+            >
+              Ajouter la nomination
+            </button>
           </div>
-        </>
-      )}
-    </div>
-  );
+        </div>
+      </>
+    )}
+
+    <CommentairesMatch
+      matchId={match.id}
+      players={players}
+      currentPlayer={currentPlayer}
+      isAdmin={isAdmin}
+    />
+  </div>
+);
 }
 
 export default MatchApres;

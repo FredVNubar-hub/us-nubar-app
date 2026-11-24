@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import CompositionTerrain from "../components/CompositionTerrain";
+import CommentairesMatch from "../components/CommentairesMatch";
 
-function MatchLive({ match, players, events, availability, composition, isAdmin, onReload }: any) {
+function MatchLive({ match, players, events, availability, composition, currentPlayer, isAdmin, onReload }: any) {
   const [goalScorer, setGoalScorer] = useState("");
   const [goalAssist, setGoalAssist] = useState("");
   const [goalMinuteManual, setGoalMinuteManual] = useState("");
@@ -277,7 +278,7 @@ function MatchLive({ match, players, events, availability, composition, isAdmin,
       )}
     </div>
 
-    <CompositionTerrain
+          <CompositionTerrain
         matchId={match.id}
         players={players}
         availability={availability}
@@ -285,6 +286,13 @@ function MatchLive({ match, players, events, availability, composition, isAdmin,
         isAdmin={isAdmin}
         isLive={true}
         onReload={onReload}
+      />
+
+      <CommentairesMatch
+        matchId={match.id}
+        players={players}
+        currentPlayer={currentPlayer}
+        isAdmin={isAdmin}
       />
     </>
   );
