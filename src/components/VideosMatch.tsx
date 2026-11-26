@@ -183,7 +183,7 @@ export default function VideosMatch({ matchId, isAdmin }: VideosMatchProps) {
                   }}
                 >
                   <iframe
-                    src={`https://youtube.com{ytId}`}
+                    src={"https://youtube.com" + ytId}
                     title={v.titre || "Vidéo YouTube US Nubar"}
                     style={{
                       position: "absolute",
