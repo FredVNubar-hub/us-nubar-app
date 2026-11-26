@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import CompositionTerrain from "../components/CompositionTerrain";
 import CommentairesMatch from "../components/CommentairesMatch";
+import VideosMatch from "../components/VideosMatch";
 
 function MatchLive({ match, players, events, availability, composition, currentPlayer, isAdmin, onReload }: any) {
   const [goalScorer, setGoalScorer] = useState("");
@@ -113,6 +114,7 @@ function MatchLive({ match, players, events, availability, composition, currentP
 
   return (
     <>
+    <VideosMatch matchId={match.id} isAdmin={isAdmin} />
     <div style={card}>
       <h2 style={{ color: "#1009E6", marginTop: 0, textAlign: "center" }}>⏱️ Direct du match</h2>
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import CommentairesMatch from "../components/CommentairesMatch";
+import VideosMatch from "../components/VideosMatch";
 
 function MatchApres({ match, players, events, availability, currentPlayer, isAdmin, onReload }: any) {
   const [editScoreNubar, setEditScoreNubar] = useState<number>(match.score_us_nubar ?? 0);
@@ -182,6 +183,7 @@ function MatchApres({ match, players, events, availability, currentPlayer, isAdm
   const card = { backgroundColor: "#FFF", padding: "20px", borderRadius: "16px", border: "1px solid #E5E7EB", marginBottom: "20px" };
   return (
     <div>
+      <VideosMatch matchId={match.id} isAdmin={isAdmin} />
       {/* ENCADRÉ HOMME DU MATCH */}
       <div style={card}>
         <h2 style={{ color: "#1009E6", marginTop: 0 }}>🏅 Homme du Match</h2>
